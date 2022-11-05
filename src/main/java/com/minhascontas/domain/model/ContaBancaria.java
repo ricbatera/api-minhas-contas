@@ -2,6 +2,7 @@ package com.minhascontas.domain.model;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,7 +29,9 @@ public class ContaBancaria {
 	
 	private String nome;
 	private String obs;
-	private BigDecimal saldo;
+	private BigDecimal saldo = BigDecimal.ZERO;
 	private Boolean status = true;
+	@Embedded
+	private DadosTabela dados =new DadosTabela();
 
 }

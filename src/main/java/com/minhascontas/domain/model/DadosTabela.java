@@ -1,36 +1,40 @@
 package com.minhascontas.domain.model;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 @Embeddable
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DadosTabela {
-	
-//	@CreationTimestamp
-//	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "datetime(2)")
-	private LocalDateTime dataCriacao;
-	
-//	@UpdateTimestamp
-//	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "datetime(2)")
-	private LocalDateTime dataAlteracao;
-	
+
+	@JsonIgnore
+	private String usuario = "Ricardo Alves Roberto";
+	@JsonIgnore
+	private OffsetDateTime dataCriacao;
+	@JsonIgnore
+	private OffsetDateTime dataAlteracao;
+
 	@PrePersist
-    private void setaDatas() {
-		dataCriacao = LocalDateTime.now();
-		dataAlteracao = LocalDateTime.now();
+	private void setaDatas() {
+		dataCriacao = OffsetDateTime.now();
+		dataAlteracao = OffsetDateTime.now();
 		System.out.println("Stenado data " + dataCriacao.toString());
-    }
- 
-    @PreUpdate
-    public void preUpdate() {
-    	dataAlteracao = LocalDateTime.now();
-    	System.out.println("Stenado data " + dataCriacao.toString());
-    } 
-	
+	}
+
+	@PreUpdate
+	public void preUpdate() {
+		dataAlteracao = OffsetDateTime.now();
+	}
+
 }

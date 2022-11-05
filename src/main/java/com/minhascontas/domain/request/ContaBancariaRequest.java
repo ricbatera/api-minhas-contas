@@ -3,10 +3,9 @@ package com.minhascontas.domain.request;
 import lombok.Data;
 
 @Data
-public class CartaoCreditoRequest {
+public class ContaBancariaRequest {
 	private Long id;
 	private String nome;
-	private Integer diaVencimento;
-	private String descricao;
+	private String obs;
 	private Boolean status = true;
 }

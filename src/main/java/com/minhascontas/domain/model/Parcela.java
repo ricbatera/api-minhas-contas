@@ -4,12 +4,16 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -19,7 +23,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
+@Setter()
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -39,21 +43,27 @@ public class Parcela {
 	private BigDecimal valorPago;
 	
 //	@JsonManagedReference
-//	@JsonBackReference
-//	@ManyToOne
-//	@JoinColumn(name = "saida_id")
-//	private Saida saida;	
-	
+
+	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(name = "cartao_id")
-	private CartaoCredito cartao;
+	@JoinColumn(name = "conta_id")
+	private ContaBancaria conta;
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "faura_id")
 	private Fatura fatura;
 	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "saida_id")
+	private Saida saida;
+	
 	private String situacao = "Aberto";
-
+	
+	@JsonIgnore
+	@Embedded
+	private DadosTabela dados =new DadosTabela();
 
 	@Override
 	public String toString() {
