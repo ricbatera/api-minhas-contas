@@ -7,7 +7,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class DadosTabela {
 
 	@JsonIgnore
-	private String usuario = "Ricardo Alves Roberto";
+	private String usuario = "API Minhas Contas";
 	@JsonIgnore
 	private OffsetDateTime dataCriacao;
 	@JsonIgnore

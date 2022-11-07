@@ -6,14 +6,18 @@ import org.springframework.stereotype.Component;
 import com.minhascontas.domain.dto.CartaoCreditoDto;
 import com.minhascontas.domain.dto.ContaBancariaDto;
 import com.minhascontas.domain.dto.FaturaDto;
+import com.minhascontas.domain.dto.ItemListaEntradaDto;
 import com.minhascontas.domain.dto.ItemListaSaidaDto;
 import com.minhascontas.domain.model.CartaoCredito;
 import com.minhascontas.domain.model.ContaBancaria;
+import com.minhascontas.domain.model.Entrada;
 import com.minhascontas.domain.model.Fatura;
 import com.minhascontas.domain.model.Parcela;
+import com.minhascontas.domain.model.ParcelaEntrada;
 import com.minhascontas.domain.model.Saida;
 import com.minhascontas.domain.request.CartaoCreditoRequest;
 import com.minhascontas.domain.request.ContaBancariaRequest;
+import com.minhascontas.domain.request.EntradaRequest;
 import com.minhascontas.domain.request.SaidaRequest;
 
 @Component
@@ -51,5 +55,14 @@ public class DefaultMapper {
 	//FATURA
 	public FaturaDto modelFaturaToDto (Fatura fatura) {
 		return modelMapper.map(fatura, FaturaDto.class);
+	}
+	
+	//ENTRADA	
+	public Entrada requestEntradaToModel(EntradaRequest payload) {
+		return modelMapper.map(payload, Entrada.class);
+	}
+	
+	public ItemListaEntradaDto modelToItemListaEntradaDto(ParcelaEntrada parcela) {
+		return modelMapper.map(parcela, ItemListaEntradaDto.class);
 	}
 }

@@ -2,7 +2,6 @@ package com.minhascontas.domain.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -285,8 +284,6 @@ public class SaidasService {
 			ItemListaSaidaDto i = mapper.modelSaidaToDto(p);
 			response.add(i);
 		}
-		
-		response.forEach(System.out::println);
 		return response;
 	}
 
