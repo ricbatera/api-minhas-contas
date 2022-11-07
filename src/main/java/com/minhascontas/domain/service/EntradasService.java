@@ -84,6 +84,7 @@ public class EntradasService {
 		BigDecimal valorAtual = conta.getSaldo();
 		valorAtual = valorAtual.add(valor);
 		conta.setSaldo(valorAtual);
+		contaRepo.save(conta);
 		return conta;
 	}
 
