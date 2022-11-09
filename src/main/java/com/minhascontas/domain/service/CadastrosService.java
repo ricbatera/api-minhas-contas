@@ -160,4 +160,24 @@ public class CadastrosService {
 		return mapper.modelToDevedorDto(devedorRepo.save(d));
 	}
 
+	public List<DevedorDto> listarDevedores() {
+		List<DevedorDto> response = new ArrayList<>();
+		List<Devedor> lista = devedorRepo.findAll();
+		
+		for(Devedor d : lista) {
+			response.add(mapper.modelToDevedorDto(d));
+		}
+		return response;
+	}
+
+	public List<ClassificacaoDto> listarClassificacoes() {
+		List<ClassificacaoDto> response = new ArrayList<>();
+		List<Classificacao> lista = classificacaoRepo.findAll();
+		
+		for(Classificacao c : lista) {
+			response.add(mapper.modelToClassificacaoDto(c));
+		}
+		return response;
+	}
+
 }
