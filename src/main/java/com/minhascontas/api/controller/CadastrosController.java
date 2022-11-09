@@ -15,9 +15,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.minhascontas.domain.dto.CartaoCreditoDto;
+import com.minhascontas.domain.dto.ClassificacaoDto;
 import com.minhascontas.domain.dto.ContaBancariaDto;
+import com.minhascontas.domain.dto.DevedorDto;
 import com.minhascontas.domain.request.CartaoCreditoRequest;
+import com.minhascontas.domain.request.ClassificacaoRequest;
 import com.minhascontas.domain.request.ContaBancariaRequest;
+import com.minhascontas.domain.request.DevedorRequest;
 import com.minhascontas.domain.service.CadastrosService;
 
 @CrossOrigin
@@ -72,5 +76,19 @@ public class CadastrosController {
 	public ContaBancariaDto atualizaContaBancaria(@RequestBody ContaBancariaRequest atualizacao, @PathVariable Long id) {
 		return cadastrosService.atualizaContaBancaria(atualizacao, id);
 	}
+	
+	//classificacao
+	@PostMapping("/classificacao/nova-classificacao")
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public ClassificacaoDto novaCLassificacao(@RequestBody ClassificacaoRequest payload) {
+		return cadastrosService.novaClassificacao(payload);		
+	}
+	
+	//devedor
+		@PostMapping("/devedor/novo-devedor")
+		@ResponseStatus(code = HttpStatus.CREATED)
+		public DevedorDto novDevedor(@RequestBody DevedorRequest payload) {
+			return cadastrosService.novoDevedor(payload);		
+		}
 
 }

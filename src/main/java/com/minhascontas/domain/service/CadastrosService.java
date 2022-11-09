@@ -8,17 +8,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.minhascontas.domain.dto.CartaoCreditoDto;
+import com.minhascontas.domain.dto.ClassificacaoDto;
 import com.minhascontas.domain.dto.ContaBancariaDto;
+import com.minhascontas.domain.dto.DevedorDto;
 import com.minhascontas.domain.mapper.DefaultMapper;
 import com.minhascontas.domain.model.CartaoCredito;
+import com.minhascontas.domain.model.Classificacao;
 import com.minhascontas.domain.model.ContaBancaria;
+import com.minhascontas.domain.model.Devedor;
 import com.minhascontas.domain.model.Fatura;
 import com.minhascontas.domain.model.Parcela;
 import com.minhascontas.domain.repository.CartaoCreditoRepository;
+import com.minhascontas.domain.repository.ClassificacaoRepository;
 import com.minhascontas.domain.repository.ContaBancariaRepository;
+import com.minhascontas.domain.repository.DevedorRepository;
 import com.minhascontas.domain.repository.FaturaRepository;
 import com.minhascontas.domain.request.CartaoCreditoRequest;
+import com.minhascontas.domain.request.ClassificacaoRequest;
 import com.minhascontas.domain.request.ContaBancariaRequest;
+import com.minhascontas.domain.request.DevedorRequest;
 
 @Service
 public class CadastrosService {
@@ -31,6 +39,12 @@ public class CadastrosService {
 
 	@Autowired
 	private ContaBancariaRepository contaRepo;
+	
+	@Autowired
+	private ClassificacaoRepository classificacaoRepo;
+	
+	@Autowired
+	private DevedorRepository devedorRepo;
 
 	@Autowired
 	private DefaultMapper mapper;
@@ -134,6 +148,16 @@ public class CadastrosService {
 		BeanUtils.copyProperties(conta, contaBase, "id", "dados");
 		contaRepo.save(contaBase);
 		return mapper.contaBancariaModelToDto(contaBase);
+	}
+
+	public ClassificacaoDto novaClassificacao(ClassificacaoRequest payload) {
+		Classificacao c = mapper.requestClassificacaoToModel(payload);
+		return mapper.modelToClassificacaoDto(classificacaoRepo.save(c));
+	}
+
+	public DevedorDto novoDevedor(DevedorRequest payload) {
+		Devedor d = mapper.requestDevedorToModel(payload);
+		return mapper.modelToDevedorDto(devedorRepo.save(d));
 	}
 
 }

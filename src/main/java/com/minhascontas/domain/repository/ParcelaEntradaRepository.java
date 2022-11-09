@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.minhascontas.domain.model.Entrada;
 import com.minhascontas.domain.model.ParcelaEntrada;
 
 public interface ParcelaEntradaRepository extends JpaRepository<ParcelaEntrada, Long>{
