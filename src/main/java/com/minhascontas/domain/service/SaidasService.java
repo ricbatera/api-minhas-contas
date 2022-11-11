@@ -13,15 +13,20 @@ import com.minhascontas.domain.dto.FaturaDto;
 import com.minhascontas.domain.dto.ItemListaSaidaDto;
 import com.minhascontas.domain.mapper.DefaultMapper;
 import com.minhascontas.domain.model.CartaoCredito;
+import com.minhascontas.domain.model.Classificacao;
 import com.minhascontas.domain.model.ContaBancaria;
+import com.minhascontas.domain.model.Devedor;
 import com.minhascontas.domain.model.Fatura;
 import com.minhascontas.domain.model.Parcela;
 import com.minhascontas.domain.model.Saida;
 import com.minhascontas.domain.repository.CartaoCreditoRepository;
+import com.minhascontas.domain.repository.ClassificacaoRepository;
 import com.minhascontas.domain.repository.ContaBancariaRepository;
+import com.minhascontas.domain.repository.DevedorRepository;
 import com.minhascontas.domain.repository.FaturaRepository;
 import com.minhascontas.domain.repository.ParcelaRepository;
 import com.minhascontas.domain.repository.SaidaRepository;
+import com.minhascontas.domain.request.EntradaRequest;
 import com.minhascontas.domain.request.PagarFaturaRequest;
 import com.minhascontas.domain.request.PagarParcelaRequest;
 import com.minhascontas.domain.request.SaidaRequest;
@@ -45,31 +50,44 @@ public class SaidasService {
 	private ParcelaRepository parcelaRepo;
 	
 	@Autowired
+	private ClassificacaoRepository classificacaoRepo;
+	
+	@Autowired
+	private EntradasService entradaService;
+	
+	@Autowired
+	private DevedorRepository devedorRepo;
+	
+	@Autowired
 	private DefaultMapper mapper;
 
 
 	public void novaSaida(SaidaRequest saida) {
 		Saida novaSaida = mapper.saidaRequestToModel(saida);
-		if(saida.getMeioPagto().equals("cartao")) {
+		if(saida.getMeioPagto().equals("cartao")) {			
 			CartaoCredito cartao= cartaoRepo.findById(saida.getCartaoSelecionado()).get();
-			List<Parcela> parcelas = gerarParcelasCartao(cartao, saida.getDataVencimento(), saida.getQtdeParcelas(), saida.getValor());
+			List<Parcela> parcelas = gerarParcelasCartao(saida, cartao, null);
 			novaSaida.setListaParcelas(parcelas);
 			saidaRepo.save(novaSaida);
 			atualizaValorFaturas(saida.getDataVencimento(), cartao, saida.getQtdeParcelas());
+			
 		}else {
 			List<Parcela> parcelas = gerarParcelas(saida);
 			novaSaida.setListaParcelas(parcelas);
 			saidaRepo.save(novaSaida);
-		}		
+		}
+		// gera as entradas de devedores
+		if(saida.getCriaEntrada()) {
+			geraEntradaDevedor(saida);
+		}
 		
 	}
-	
-
 
 	private List<Parcela> gerarParcelas(SaidaRequest saida) {
 		List<Parcela> parcelas = new ArrayList<>();
 		List<LocalDate> vencimentos = new ArrayList<>();
 		ContaBancaria conta = new ContaBancaria();
+		Classificacao c = classificacaoRepo.findById(saida.getClassificacaoId()).get();
 		if(saida.getPago()) {
 			conta = contaRepo.findById(saida.getIdConta()).get();			
 		}
@@ -85,6 +103,7 @@ public class SaidasService {
 			Parcela p = new Parcela();
 			p.setDataVencimento(vencimento);
 			p.setValor(saida.getValor());
+			p.setClassificacao(c);
 			if(saida.getPago()) {
 				p.setSituacao("Pago");
 				p.setValorPago(saida.getValor());
@@ -100,21 +119,30 @@ public class SaidasService {
 
 
 
-	private List<Parcela> gerarParcelasCartao(CartaoCredito cartao, String dataVencimento, Integer qtdeParcelas, BigDecimal valor) {
+	private List<Parcela> gerarParcelasCartao(SaidaRequest s, CartaoCredito cartao, PagarFaturaRequest pf) {
 		
-		LocalDate dataPrimeiroVencimento = Utilitarios.getDataVencimentoCartaoLocalDate(dataVencimento, cartao.getDiaVencimento());
-				
 		//gerar lista de vencimentos das parcelas
 		List<LocalDate> listaVencimentos = new ArrayList<>();
-		for (Long i = 0L; i < qtdeParcelas; i++) {			
-			listaVencimentos.add(dataPrimeiroVencimento.plusMonths(i));
+		
+		if(s!=null) {
+			LocalDate dataPrimeiroVencimento = Utilitarios.getDataVencimentoCartaoLocalDate(s.getDataVencimento(), cartao.getDiaVencimento());
+			for (Long i = 0L; i < s.getQtdeParcelas(); i++) {			
+				listaVencimentos.add(dataPrimeiroVencimento.plusMonths(i));
+			}			
+		}else {
+			LocalDate dataPrimeiroVencimento = Utilitarios.getDataVencimentoCartaoLocalDate(pf.getDataPagamento(), cartao.getDiaVencimento());
+			
+			for (Long i = 0L; i < 1; i++) {			
+				listaVencimentos.add(dataPrimeiroVencimento.plusMonths(i));
+			}
 		}
+				
 		
 		//gerar faturas - armazena lista de faturas
 		List<Fatura> faturas = gerarFaturas(listaVencimentos, cartao);
 		
 		//gerar parcelas
-		List<Parcela> parcelas = criarParcelas(listaVencimentos, faturas ,valor);
+		List<Parcela> parcelas = criarParcelas(listaVencimentos, faturas , s, pf);
 		
 		
 		//relacionando parcela com sua fatura
@@ -148,7 +176,26 @@ public class SaidasService {
 		return faturas;
 	}
 	
-	private List<Parcela> criarParcelas(List<LocalDate> listaVencimentos, List<Fatura> faturas, BigDecimal valor) {
+	private List<Parcela> criarParcelas(List<LocalDate> listaVencimentos, List<Fatura> faturas, SaidaRequest s, PagarFaturaRequest pf) {
+		Classificacao c = null;
+		BigDecimal valor = BigDecimal.ZERO;
+		Devedor d = null;
+		
+		if(s != null) {
+			c = classificacaoRepo.findById(s.getClassificacaoId()).get();
+			valor = valor.add(s.getValor());
+			if(s.getAssociaDevedor()) {
+				d = devedorRepo.findById(s.getDevedorId()).get();
+			}
+		}
+		
+		if(pf != null) {
+			c = classificacaoRepo.findById(pf.getClassificacaoId()).get();
+			valor = valor.add(pf.getValor());
+			if(pf.getAssociaDevedor()) {
+				d = devedorRepo.findById(pf.getDevedorId()).get();
+			}
+		}
 		
 		List<Parcela> parcelas = new ArrayList<>();
 		int cont = 0;
@@ -157,6 +204,8 @@ public class SaidasService {
 			p.setFatura(faturas.get(cont));
 			p.setDataVencimento(vencimento);
 			p.setValor(valor);
+			p.setClassificacao(c);				
+			p.setDevedor(d);
 			parcelas.add(p);
 			cont++;
 		}
@@ -202,6 +251,8 @@ public class SaidasService {
 		CartaoCredito cartao = fatura.getCartao();
 		LocalDate dataPagamento = Utilitarios.getDatasInicialFinalAtualLocalDate(dadosPagto.getDataPagamento()).get(2);
 		
+		// criar algo para gerar classificação de devedores automática
+		
 		if(dadosPagto.getGerarParcelaComDiferenca() && dadosPagto.getValor().compareTo(fatura.getValor()) != 0) {
 			// gerar parcela com a diferença do pagamento
 			List<LocalDate> vencimento = new ArrayList<>();
@@ -210,7 +261,9 @@ public class SaidasService {
 			data = data.substring(0, 10);
 			BigDecimal diferenca = fatura.getValor();
 			diferenca = diferenca.subtract(dadosPagto.getValor());
-			List<Parcela> parcelaDiferenca = gerarParcelasCartao(cartao, data, 1, diferenca);
+			dadosPagto.setDataPagamento(data);
+			dadosPagto.setValor(diferenca);
+			List<Parcela> parcelaDiferenca = gerarParcelasCartao(null, cartao, dadosPagto); // estudar aqui qual item mandar como categoria
 			Saida novaSaida = new Saida();
 			novaSaida.setListaParcelas(parcelaDiferenca);
 			novaSaida.setMeioPagto("cartao");
@@ -295,5 +348,19 @@ public class SaidasService {
 		return response;
 	}
 
-
+	private void geraEntradaDevedor(SaidaRequest saida) {
+		
+		EntradaRequest e = new EntradaRequest();
+		
+		e.setAssociaDevedor(saida.getAssociaDevedor());
+		e.setClassificacaoId(saida.getClassificacaoId());
+		e.setDataPrevistaRecebimento(saida.getDataVencimento());
+		e.setDevedorId(saida.getDevedorId());
+		e.setQtdeParcelas(saida.getQtdeParcelas());
+		e.setRecebido(false);// implementar o recebido sim ou não nas entradas
+		e.setNome(saida.getNome() + ". Entrada Automática ");
+		e.setObs(saida.getObs() + ". ENTRADA AUTOMÁTICA GERADA PELO SISTEMA");
+		e.setValor(saida.getValorEntrada());
+		entradaService.novaEntrada(e);		
+	}
 }

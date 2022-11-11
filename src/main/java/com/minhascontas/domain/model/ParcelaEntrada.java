@@ -49,6 +49,10 @@ public class ParcelaEntrada {
 	@JoinColumn(name = "conta_id")
 	private ContaBancaria conta;
 	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "devedor_id")
+	private Devedor devedor;
 		
 	@JsonBackReference
 	@ManyToOne
@@ -56,6 +60,11 @@ public class ParcelaEntrada {
 	private Entrada entrada;
 	
 	private String situacao = "Aberto";
+	
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "classificacao_id")
+	private Classificacao classificacao;
 	
 	@JsonIgnore
 	@Embedded

@@ -59,6 +59,16 @@ public class Parcela {
 	@JoinColumn(name = "saida_id")
 	private Saida saida;
 	
+	
+	@ManyToOne
+	@JoinColumn(name = "classificacao_id")
+	private Classificacao classificacao;
+	
+	
+	@ManyToOne
+	@JoinColumn(name = "devedor_id")
+	private Devedor devedor;
+	
 	private String situacao = "Aberto";
 	
 	@JsonIgnore

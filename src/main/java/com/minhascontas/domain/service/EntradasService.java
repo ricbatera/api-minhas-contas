@@ -11,10 +11,14 @@ import org.springframework.stereotype.Service;
 import com.minhascontas.core.utils.Utilitarios;
 import com.minhascontas.domain.dto.ItemListaEntradaDto;
 import com.minhascontas.domain.mapper.DefaultMapper;
+import com.minhascontas.domain.model.Classificacao;
 import com.minhascontas.domain.model.ContaBancaria;
+import com.minhascontas.domain.model.Devedor;
 import com.minhascontas.domain.model.Entrada;
 import com.minhascontas.domain.model.ParcelaEntrada;
+import com.minhascontas.domain.repository.ClassificacaoRepository;
 import com.minhascontas.domain.repository.ContaBancariaRepository;
+import com.minhascontas.domain.repository.DevedorRepository;
 import com.minhascontas.domain.repository.EntradaRepository;
 import com.minhascontas.domain.repository.ParcelaEntradaRepository;
 import com.minhascontas.domain.request.EntradaRequest;
@@ -31,12 +35,18 @@ public class EntradasService {
 
 	@Autowired
 	private ContaBancariaRepository contaRepo;
+	
+	@Autowired
+	private ClassificacaoRepository classificacaoRepo;
+	
+	@Autowired
+	private DevedorRepository devedorRepo;
 
 	@Autowired
 	private DefaultMapper mapper;
 
 	public void novaEntrada(EntradaRequest payload) {
-		Entrada novaEntrada = mapper.requestEntradaToModel(payload);
+		Entrada novaEntrada = mapper.requestEntradaToModel(payload);	
 
 		// gera as parcelas
 		novaEntrada.setListaParcelas(gerarParcelas(payload));
@@ -49,6 +59,7 @@ public class EntradasService {
 	private List<ParcelaEntrada> gerarParcelas(EntradaRequest payload) {
 		List<ParcelaEntrada> parcelas = new ArrayList<>();
 		List<LocalDate> vencimentos = new ArrayList<>();
+		Classificacao c = classificacaoRepo.findById(payload.getClassificacaoId()).get();
 
 		// SE VIER MARCADO COMO RECEBIDO
 		ContaBancaria conta = new ContaBancaria();
@@ -67,6 +78,11 @@ public class EntradasService {
 			ParcelaEntrada p = new ParcelaEntrada();
 			p.setDataPrevistaRecebimento(vencimento);
 			p.setValor(payload.getValor());
+			p.setClassificacao(c);
+			if(payload.getAssociaDevedor()) {
+				Devedor d = devedorRepo.findById(payload.getDevedorId()).get();
+				p.setDevedor(d);
+			}
 			if (payload.getRecebido()) {
 				p.setSituacao("Recebido");
 				p.setConta(conta);

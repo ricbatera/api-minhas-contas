@@ -14,4 +14,7 @@ public class EntradaRequest {
 	private BigDecimal valor;
 	private Boolean recebido = false;
 	private Long idConta;
+	private Boolean associaDevedor = false;
+	private Long devedorId;
+	private Long classificacaoId;
 }

@@ -11,4 +11,7 @@ public class PagarFaturaRequest {
 	private Long idConta;
 	private BigDecimal valor;
 	private Boolean gerarParcelaComDiferenca = false;
+	private Long classificacaoId;
+	private Boolean associaDevedor = false;
+	private Long devedorId;
 }

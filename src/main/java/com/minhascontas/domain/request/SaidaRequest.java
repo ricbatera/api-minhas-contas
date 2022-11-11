@@ -16,4 +16,9 @@ public class SaidaRequest {
 	private BigDecimal valor;
 	private Boolean pago = false;
 	private Long idConta;
+	private Long devedorId;
+	private Long classificacaoId;
+	private BigDecimal valorEntrada;
+	private Boolean associaDevedor = false;
+	private Boolean criaEntrada = false;
 }
