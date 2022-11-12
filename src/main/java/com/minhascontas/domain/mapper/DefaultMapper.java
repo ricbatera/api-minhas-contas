@@ -3,6 +3,7 @@ package com.minhascontas.domain.mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import com.minhascontas.domain.dto.CartaoCreditoDashboardDto;
 import com.minhascontas.domain.dto.CartaoCreditoDto;
 import com.minhascontas.domain.dto.ClassificacaoDto;
 import com.minhascontas.domain.dto.ContaBancariaDto;
@@ -61,6 +62,10 @@ public class DefaultMapper {
 	// FATURA
 	public FaturaDto modelFaturaToDto(Fatura fatura) {
 		return modelMapper.map(fatura, FaturaDto.class);
+	}
+	
+	public CartaoCreditoDashboardDto modelToCartaoCreditoDto (Fatura fatura) {
+		return modelMapper.map(fatura, CartaoCreditoDashboardDto.class);
 	}
 
 	// ENTRADA

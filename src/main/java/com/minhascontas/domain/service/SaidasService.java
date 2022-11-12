@@ -344,7 +344,7 @@ public class SaidasService {
 
 	public FaturaDto buscaFatura(Long idFatura) {
 		Fatura fatura = faturaRepo.findById(idFatura).get();
-		FaturaDto response = mapper.modelFaturaToDto(fatura);		
+		FaturaDto response = mapper.modelFaturaToDto(fatura);
 		return response;
 	}
 

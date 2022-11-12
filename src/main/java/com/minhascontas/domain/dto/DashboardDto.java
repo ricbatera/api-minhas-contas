@@ -1,5 +1,6 @@
 package com.minhascontas.domain.dto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import lombok.Getter;
@@ -13,5 +14,10 @@ public class DashboardDto {
 	
 	private List<CartaoCreditoDashboardDto> cartoes;
 	private List<DebitoBoletoDashboardDto> debitoBoleto;
-
+	private List<DevedortResponseDto> devedores;
+	private BigDecimal totalSaidasDoMes;
+	private BigDecimal totalEntradasDoMes;
+	private BigDecimal totalPagoDoMes;
+	private BigDecimal totalRecebidoDoMes;
+	private BigDecimal totalEmBoletos;
 }

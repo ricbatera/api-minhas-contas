@@ -20,4 +20,6 @@ public interface FaturaRepository extends JpaRepository<Fatura, Long>{
 
 	List<Fatura> findByCartaoIdAndSituacao(Long id, Boolean situacao);
 
+	List<Fatura> findByDataVencimentoBetween(LocalDate localDate, LocalDate localDate2);
+
 }

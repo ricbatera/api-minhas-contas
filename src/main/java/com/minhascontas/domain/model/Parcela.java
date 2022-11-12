@@ -54,7 +54,7 @@ public class Parcela {
 	@JoinColumn(name = "faura_id")
 	private Fatura fatura;
 	
-	@JsonBackReference
+//	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "saida_id")
 	private Saida saida;

@@ -21,7 +21,7 @@ public class DashboardController {
 	private DashboardService service;
 		
 	@GetMapping("/indicadores")
-	public List<DashboardDto> indicadores(@Param(value = "mes") int mes) {
+	public DashboardDto indicadores(@Param(value = "mes") int mes) {
 		return service.getIndicadores(mes);
 	}
 	
