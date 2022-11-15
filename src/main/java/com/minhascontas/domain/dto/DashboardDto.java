@@ -20,4 +20,6 @@ public class DashboardDto {
 	private BigDecimal totalPagoDoMes;
 	private BigDecimal totalRecebidoDoMes;
 	private BigDecimal totalEmBoletos;
+	private BigDecimal minhasSaidas;
+	private BigDecimal minhasEntradas;
 }

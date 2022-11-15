@@ -104,9 +104,9 @@ public class EntradasService {
 		return conta;
 	}
 
-	public List<ItemListaEntradaDto> listarMensal(int mes) {
+	public List<ItemListaEntradaDto> listarMensal(int mes, int ano) {
 		// criar validação para ver se o mes é entre 1 - 12
-		List<LocalDate> dataInicialDataFinal = Utilitarios.getDataInicialDataFinalLocalDate(mes);
+		List<LocalDate> dataInicialDataFinal = Utilitarios.getDataInicialDataFinalLocalDateComAno(mes, ano);
 		List<ParcelaEntrada> parcelas = parcelaRepo.findByDataPrevistaRecebimentoBetween(dataInicialDataFinal.get(0),
 				dataInicialDataFinal.get(1));
 		List<ItemListaEntradaDto> response = new ArrayList<>();

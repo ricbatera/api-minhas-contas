@@ -35,8 +35,8 @@ public class EntradasController {
 	}
 	
 	@GetMapping("/listar-mensal")
-	public List<ItemListaEntradaDto> listarSaidasMensal(@Param(value = "mes") int mes) {
-		return entradaService.listarMensal(mes);
+	public List<ItemListaEntradaDto> listarSaidasMensal(@Param(value = "mes") int mes, @Param(value = "ano") int ano) {
+		return entradaService.listarMensal(mes, ano);
 	}
 	
 	@PostMapping("/receber-parcela")

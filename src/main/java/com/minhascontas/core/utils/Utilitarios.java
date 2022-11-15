@@ -61,6 +61,19 @@ public abstract class Utilitarios {
 		return datas;
 	}
 	
+	public static List<LocalDate> getDataInicialDataFinalLocalDateComAno(int mes, int ano){
+		List<LocalDate> datas = new ArrayList<>();
+		LocalDate dataBase = LocalDate.now();
+		
+		dataBase = dataBase.withMonth(mes);
+		dataBase = dataBase.withYear(ano);
+		
+		datas.add(dataBase.withDayOfMonth(1)); // seta primeiro dia do mes
+		datas.add(dataBase.withDayOfMonth(dataBase.lengthOfMonth())); //seta ultimo dia do mes
+		
+		return datas;
+	}
+	
 	public static List<LocalDate> getDatasInicialFinalAtualLocalDate(String data){
 		List<LocalDate> datas = new ArrayList<>();
 		LocalDate dataBase = LocalDate.parse(data);		

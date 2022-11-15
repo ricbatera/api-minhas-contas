@@ -55,14 +55,14 @@ public class DashboardService {
 	@Autowired
 	private DefaultMapper mapper;
 
-	public DashboardDto getIndicadores(int mes) {
+	public DashboardDto getIndicadores(int mes, int ano) {
 		
 		// retornos do payload
 		List<CartaoCreditoDashboardDto> faturasDoMes = new ArrayList<>();
 		List<DevedortResponseDto> responseDevedores = new ArrayList<>();
 		List<DebitoBoletoDashboardDto> boletosList = new ArrayList<>();
 
-		List<LocalDate> datasBase = Utilitarios.getDataInicialDataFinalLocalDate(mes);
+		List<LocalDate> datasBase = Utilitarios.getDataInicialDataFinalLocalDateComAno(mes, ano);
 		List<Parcela> parcelas = parcelaRepo.findByDataVencimentoBetween(datasBase.get(0), datasBase.get(1));
 		List<Fatura> faturas = faturaRepo.findByDataVencimentoBetween(datasBase.get(0), datasBase.get(1));
 		Set<Devedor> devedores = new HashSet<>();
@@ -127,6 +127,18 @@ public class DashboardService {
 			responseDevedores.add(dev);
 		}
 		
+		// pega somente as minhas saidas
+		BigDecimal minhasSaidas = parcelas.stream()
+				.filter(p -> p.getDevedor() == null)
+				.map(b -> b.getValor())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		
+		// pega somente as minhas entradas
+				BigDecimal minhasEntradas = entradas.stream()
+						.filter(p -> p.getDevedor() == null)
+						.map(b -> b.getValor())
+						.reduce(BigDecimal.ZERO, BigDecimal::add);
+		
 		// fauras do mÊs
 		for(Fatura f : faturas) {
 			faturasDoMes.add(mapper.modelToCartaoCreditoDto(f));
@@ -142,6 +154,8 @@ public class DashboardService {
 		response.setTotalRecebidoDoMes(totalRecebidoDoMes);
 		response.setTotalSaidasDoMes(totalSaidasDoMes);
 		response.setTotalEmBoletos(totalEmBoletos);
+		response.setMinhasSaidas(minhasSaidas);
+		response.setMinhasEntradas(minhasEntradas);
 		return response;
 	}
 	

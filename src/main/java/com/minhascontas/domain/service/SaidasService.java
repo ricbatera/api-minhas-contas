@@ -327,9 +327,9 @@ public class SaidasService {
 
 
 
-	public List<ItemListaSaidaDto> listarMensal(int mes) {
+	public List<ItemListaSaidaDto> listarMensal(int mes, int ano) {
 		// criar validação para ver se o mes é entre 1 - 12
-		List<LocalDate> dataInicialDataFinal = Utilitarios.getDataInicialDataFinalLocalDate(mes);
+		List<LocalDate> dataInicialDataFinal = Utilitarios.getDataInicialDataFinalLocalDateComAno(mes, ano);
 		List<Parcela> parcelas = parcelaRepo.findByDataVencimentoBetween(dataInicialDataFinal.get(0), dataInicialDataFinal.get(1));
 		List<ItemListaSaidaDto> response = new ArrayList<>();
 		
