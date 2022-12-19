@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,6 +22,7 @@ import com.minhascontas.domain.request.PagarFaturaRequest;
 import com.minhascontas.domain.request.PagarParcelaRequest;
 import com.minhascontas.domain.request.SaidaRequest;
 import com.minhascontas.domain.service.SaidasService;
+import com.minhascontas.domain.service.ServicosGerais;
 
 @CrossOrigin
 @RestController
@@ -29,6 +31,8 @@ public class SaidasController {
 	
 	@Autowired
 	private SaidasService saidasService;
+	
+	@Autowired ServicosGerais service; // apagar ao final do DEV - criado apenas para automtizar ajustes nas tabelas
 	
 	//CARTAO DE CREDITO
 	@PostMapping("/nova-saida")
@@ -63,5 +67,10 @@ public class SaidasController {
 	@GetMapping("/busca-saida-id")
 	public SaidaDto buscaSaidaById(@Param(value= "idSaida") Long idSaida) {
 		return saidasService.buscaSaidaById(idSaida);
+	}
+	
+	@PutMapping
+	public void ajustarTodos(@Param(value= "id")Long id) {
+		service.ajustarTodos();
 	}
 }

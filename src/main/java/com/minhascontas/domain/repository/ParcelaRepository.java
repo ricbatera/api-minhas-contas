@@ -11,4 +11,6 @@ public interface ParcelaRepository extends JpaRepository<Parcela, Long>{
 
 	List<Parcela> findByDataVencimentoBetween(LocalDate offsetDateTime, LocalDate offsetDateTime2);
 
+	List<Parcela> findBySaidaId(Long id);
+
 }
