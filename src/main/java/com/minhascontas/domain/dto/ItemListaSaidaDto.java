@@ -26,5 +26,6 @@ public class ItemListaSaidaDto {
 	private Saida saida;
 	private String situacao;
 	private ContaBancaria conta;
+	private String contagemParcelas;
 
 }
