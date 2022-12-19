@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.minhascontas.domain.dto.FaturaDto;
 import com.minhascontas.domain.dto.ItemListaSaidaDto;
+import com.minhascontas.domain.dto.SaidaDto;
+import com.minhascontas.domain.model.Saida;
 import com.minhascontas.domain.request.PagarFaturaRequest;
 import com.minhascontas.domain.request.PagarParcelaRequest;
 import com.minhascontas.domain.request.SaidaRequest;
@@ -56,5 +58,10 @@ public class SaidasController {
 	@GetMapping("/busca-fatura")
 	public FaturaDto buscaFatura(@Param(value = "idFatura") Long idFatura) {
 		return saidasService.buscaFatura(idFatura);
+	}
+	
+	@GetMapping("/busca-saida-id")
+	public SaidaDto buscaSaidaById(@Param(value= "idSaida") Long idSaida) {
+		return saidasService.buscaSaidaById(idSaida);
 	}
 }

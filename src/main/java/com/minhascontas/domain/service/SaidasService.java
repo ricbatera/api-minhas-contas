@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.minhascontas.core.utils.Utilitarios;
 import com.minhascontas.domain.dto.FaturaDto;
 import com.minhascontas.domain.dto.ItemListaSaidaDto;
+import com.minhascontas.domain.dto.SaidaDto;
 import com.minhascontas.domain.mapper.DefaultMapper;
 import com.minhascontas.domain.model.CartaoCredito;
 import com.minhascontas.domain.model.Classificacao;
@@ -206,6 +208,7 @@ public class SaidasService {
 			p.setValor(valor);
 			p.setClassificacao(c);				
 			p.setDevedor(d);
+			p.setContagemParcelas((cont + 1) + "/"+ listaVencimentos.size());
 			parcelas.add(p);
 			cont++;
 		}
@@ -281,7 +284,7 @@ public class SaidasService {
 		List<Parcela> parcelas = fatura.getItensFatura();
 		
 		for(Parcela parcela: parcelas) {
-//			parcela.setConta(conta);
+			parcela.setConta(conta);
 			parcela.setDataPagamento(dataPagamento);
 			parcela.setSituacao("Pago");
 			parcela.setValorPago(parcela.getValor());
@@ -362,5 +365,25 @@ public class SaidasService {
 		e.setObs(saida.getObs() + ". ENTRADA AUTOMÁTICA GERADA PELO SISTEMA");
 		e.setValor(saida.getValorEntrada());
 		entradaService.novaEntrada(e);		
+	}
+
+	public SaidaDto buscaSaidaById(Long id) {
+		Saida s = saidaRepo.findById(id).get();
+		SaidaDto sd = mapper.modelToSaidaDto(s);
+		List<Parcela> lista = s.getListaParcelas();
+		
+		List<Parcela> pagas =  lista.stream()
+		.filter(p-> p.getSituacao().equals("Pago"))
+		.collect(Collectors.toList());
+		
+		BigDecimal total = lista.stream()
+				.map(p -> p.getValor())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		if(lista.get(0).getFatura() != null) {
+			sd.setCartao(lista.get(0).getFatura().getCartao());
+		}
+		sd.setXDeParcelas(String.valueOf(pagas.size()) +"/"+ String.valueOf(lista.size()));
+		sd.setTotal(total);
+		return sd;
 	}
 }

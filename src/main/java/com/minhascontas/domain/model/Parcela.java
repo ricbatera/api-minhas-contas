@@ -42,6 +42,8 @@ public class Parcela {
 	@Column
 	private BigDecimal valorPago;
 	
+	private String contagemParcelas;
+	
 //	@JsonManagedReference
 
 	@JsonIgnore

@@ -11,6 +11,8 @@ import com.minhascontas.domain.dto.DevedorDto;
 import com.minhascontas.domain.dto.FaturaDto;
 import com.minhascontas.domain.dto.ItemListaEntradaDto;
 import com.minhascontas.domain.dto.ItemListaSaidaDto;
+import com.minhascontas.domain.dto.ParcelaDto;
+import com.minhascontas.domain.dto.SaidaDto;
 import com.minhascontas.domain.model.CartaoCredito;
 import com.minhascontas.domain.model.Classificacao;
 import com.minhascontas.domain.model.ContaBancaria;
@@ -57,6 +59,14 @@ public class DefaultMapper {
 
 	public ItemListaSaidaDto modelSaidaToDto(Parcela parcela) {
 		return modelMapper.map(parcela, ItemListaSaidaDto.class);
+	}
+	
+	public SaidaDto modelToSaidaDto(Saida saida) {
+		return modelMapper.map(saida, SaidaDto.class);
+	}
+	
+	public ParcelaDto modelToParcelaDto(Parcela p) {
+		return modelMapper.map(p, ParcelaDto.class);
 	}
 
 	// FATURA

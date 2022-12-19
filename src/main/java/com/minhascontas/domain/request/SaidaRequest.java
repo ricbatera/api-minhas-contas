@@ -15,6 +15,7 @@ public class SaidaRequest {
 	private Long cartaoSelecionado;
 	private BigDecimal valor;
 	private Boolean pago = false;
+	private Long idContaBancaria;
 	private Long idConta;
 	private Long devedorId;
 	private Long classificacaoId;
