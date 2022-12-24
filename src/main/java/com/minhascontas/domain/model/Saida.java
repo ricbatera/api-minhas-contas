@@ -1,9 +1,11 @@
 package com.minhascontas.domain.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,6 +38,9 @@ public class Saida {
 	
 	private String nome;
 	private String obs;
+	
+	@Column
+	private LocalDate dataCompra;
 	
 	@JsonIgnore
 	@Embedded

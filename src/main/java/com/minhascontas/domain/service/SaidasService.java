@@ -66,6 +66,9 @@ public class SaidasService {
 
 	public void novaSaida(SaidaRequest saida) {
 		Saida novaSaida = mapper.saidaRequestToModel(saida);
+		if(saida.getDataCompra() != null && !(saida.getDataCompra().isEmpty())) {
+			novaSaida.setDataCompra(LocalDate.parse(saida.getDataCompra()));
+		}
 		if(saida.getMeioPagto().equals("cartao")) {			
 			CartaoCredito cartao= cartaoRepo.findById(saida.getCartaoSelecionado()).get();
 			List<Parcela> parcelas = gerarParcelasCartao(saida, cartao, null);
@@ -127,7 +130,12 @@ public class SaidasService {
 		List<LocalDate> listaVencimentos = new ArrayList<>();
 		
 		if(s!=null) {
-			LocalDate dataPrimeiroVencimento = Utilitarios.getDataVencimentoCartaoLocalDate(s.getDataVencimento(), cartao.getDiaVencimento());
+			LocalDate dataPrimeiroVencimento = LocalDate.now();
+			if(s.getDataCompra() != null && !(s.getDataCompra().isEmpty())) {
+				dataPrimeiroVencimento = Utilitarios.getDataVencimentoCartaoLocalDateByDataCompra(s.getDataCompra(), cartao.getDiaVencimento());				
+			}else {
+				dataPrimeiroVencimento = Utilitarios.getDataVencimentoCartaoLocalDate(s.getDataVencimento(), cartao.getDiaVencimento());
+			}
 			for (Long i = 0L; i < s.getQtdeParcelas(); i++) {			
 				listaVencimentos.add(dataPrimeiroVencimento.plusMonths(i));
 			}			

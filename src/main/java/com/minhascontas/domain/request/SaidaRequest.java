@@ -11,6 +11,7 @@ public class SaidaRequest {
 	private String obs;
 	private String meioPagto;
 	private String dataVencimento;
+	private String dataCompra;
 	private Integer qtdeParcelas;
 	private Long cartaoSelecionado;
 	private BigDecimal valor;

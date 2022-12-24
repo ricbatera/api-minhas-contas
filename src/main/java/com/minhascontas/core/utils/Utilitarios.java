@@ -45,9 +45,16 @@ public abstract class Utilitarios {
 	}
 	
 	public static LocalDate getDataVencimentoCartaoLocalDate(String data, Integer diaVencimento) {
-		LocalDate vencimento = LocalDate.parse(data);		
+		LocalDate vencimento = LocalDate.parse(data);
 		return vencimento.withDayOfMonth(diaVencimento);
 	}
+	
+	public static LocalDate getDataVencimentoCartaoLocalDateByDataCompra(String data, Integer diaVencimento) {
+		LocalDate vencimento = LocalDate.parse(data);
+		vencimento = vencimento.plusMonths(1L);
+		return vencimento.withDayOfMonth(diaVencimento);
+	}
+	
 	
 	public static List<LocalDate> getDataInicialDataFinalLocalDate(int mes){
 		List<LocalDate> datas = new ArrayList<>();
