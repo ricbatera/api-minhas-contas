@@ -27,5 +27,7 @@ public class ItemListaSaidaDto {
 	private String situacao;
 	private ContaBancaria conta;
 	private String contagemParcelas;
+	private String devedorNome;
+	private String classificacaoNome;
 
 }

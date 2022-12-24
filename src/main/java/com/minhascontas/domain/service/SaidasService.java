@@ -338,6 +338,11 @@ public class SaidasService {
 		
 		for(Parcela p: parcelas ) {
 			ItemListaSaidaDto i = mapper.modelSaidaToDto(p);
+			if(p.getDevedor() != null) {
+				i.setDevedorNome(p.getDevedor().getNome());				
+			} else {
+				i.setDevedorNome("Minha");
+			}
 			response.add(i);
 		}
 		return response;
