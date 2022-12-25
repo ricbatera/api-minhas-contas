@@ -73,4 +73,9 @@ public class SaidasController {
 	public void ajustarTodos(@Param(value= "id")Long id) {
 		service.ajustarTodos();
 	}
+	
+	@PutMapping("/atualiza-faturas")
+	public void atualizaValorTodasFaturas() {
+		service.atualizaTodasFaturas();
+	}
 }

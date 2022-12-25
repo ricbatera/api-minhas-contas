@@ -423,9 +423,20 @@ public class ServicosGerais {
 				cont ++;
 			}
 			parcelaRepo.saveAll(parcelaList);
+		}		
+	}
+	
+	public void atualizaTodasFaturas() {
+		List<Fatura> faturas = faturaRepo.findAll();
+		
+		for(Fatura fatura : faturas) { 
+			List<Parcela> parcelas = fatura.getItensFatura();
+			BigDecimal  valorTotal = BigDecimal.ZERO;
+			for(Parcela parcela: parcelas) {
+				valorTotal = valorTotal.add(parcela.getValor());
+			}
+			fatura.setValor(valorTotal);
 		}
-		
-		
-		
+		faturaRepo.saveAll(faturas);		
 	}
 }

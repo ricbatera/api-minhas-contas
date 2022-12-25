@@ -74,7 +74,11 @@ public class SaidasService {
 			List<Parcela> parcelas = gerarParcelasCartao(saida, cartao, null);
 			novaSaida.setListaParcelas(parcelas);
 			saidaRepo.save(novaSaida);
-			atualizaValorFaturas(saida.getDataVencimento(), cartao, saida.getQtdeParcelas());
+			if(saida.getDataCompra() != null && !(saida.getDataCompra().isEmpty())) {
+				atualizaValorFaturas(saida.getDataCompra(), cartao, saida.getQtdeParcelas(), true);				
+			}else {
+				atualizaValorFaturas(saida.getDataVencimento(), cartao, saida.getQtdeParcelas(), false);
+			}
 			
 		}else {
 			List<Parcela> parcelas = gerarParcelas(saida);
@@ -224,9 +228,14 @@ public class SaidasService {
 		return parcelas;
 	}
 	
-	private void atualizaValorFaturas(String dataVencimento, CartaoCredito cartao, Integer qtdeParcelas) {
-		
-		LocalDate dataPrimeiroVencimento = Utilitarios.getDataVencimentoCartaoLocalDate(dataVencimento, cartao.getDiaVencimento());
+	private void atualizaValorFaturas(String dataVencimento, CartaoCredito cartao, Integer qtdeParcelas, boolean dataCompra) {
+		LocalDate dataPrimeiroVencimento = LocalDate.now();
+		if(dataCompra) {
+			dataPrimeiroVencimento = Utilitarios.getDataVencimentoCartaoLocalDateByDataCompra(dataVencimento, cartao.getDiaVencimento());
+		}else {
+			dataPrimeiroVencimento = Utilitarios.getDataVencimentoCartaoLocalDate(dataVencimento, cartao.getDiaVencimento());
+		}
+		 
 		List<LocalDate> listaVencimentos = new ArrayList<>();
 		for (Long i = 0L; i < qtdeParcelas; i++) {			
 			listaVencimentos.add(dataPrimeiroVencimento.plusMonths(i));
@@ -286,7 +295,7 @@ public class SaidasService {
 				novaSaida.setObs("Diferença referente ao pagamento a menor da fatura do mês anterior. Se atente para corrigir o valor, pois incidirá juros da operadora do cartão");
 			}
 			saidaRepo.save(novaSaida);				
-			atualizaValorFaturas(data, cartao, 1);
+			atualizaValorFaturas(data, cartao, 1, false);
 		}
 		
 		List<Parcela> parcelas = fatura.getItensFatura();
