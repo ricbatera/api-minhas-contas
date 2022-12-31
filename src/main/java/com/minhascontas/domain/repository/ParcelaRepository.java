@@ -13,4 +13,6 @@ public interface ParcelaRepository extends JpaRepository<Parcela, Long>{
 
 	List<Parcela> findBySaidaId(Long id);
 
+	List<Parcela> findByDataVencimentoLessThan(LocalDate data);
+
 }

@@ -21,6 +21,7 @@ import com.minhascontas.domain.model.Devedor;
 import com.minhascontas.domain.model.Fatura;
 import com.minhascontas.domain.model.Parcela;
 import com.minhascontas.domain.model.Saida;
+import com.minhascontas.domain.model.SaldoBancario;
 import com.minhascontas.domain.repository.CartaoCreditoRepository;
 import com.minhascontas.domain.repository.ClassificacaoRepository;
 import com.minhascontas.domain.repository.ContaBancariaRepository;
@@ -28,6 +29,7 @@ import com.minhascontas.domain.repository.DevedorRepository;
 import com.minhascontas.domain.repository.FaturaRepository;
 import com.minhascontas.domain.repository.ParcelaRepository;
 import com.minhascontas.domain.repository.SaidaRepository;
+import com.minhascontas.domain.repository.SaldoBancarioRepository;
 import com.minhascontas.domain.request.EntradaRequest;
 import com.minhascontas.domain.request.PagarFaturaRequest;
 import com.minhascontas.domain.request.PagarParcelaRequest;
@@ -38,6 +40,9 @@ public class SaidasService {
 
 	@Autowired
 	private SaidaRepository saidaRepo;
+	
+	@Autowired
+	private SaldoBancarioRepository saldoBancarioRepo;
 	
 	@Autowired
 	private FaturaRepository faturaRepo;
@@ -311,7 +316,6 @@ public class SaidasService {
 		
 		//atualiza o saldo da conta
 		atualizaSaldoConta(conta, dadosPagto.getValor());
-		System.out.println("Aqui");
 		contaRepo.save(conta);
 		
 		//paga a fatura
@@ -320,8 +324,31 @@ public class SaidasService {
 		fatura.setSituacao(false);
 		fatura.setConta(conta);
 		faturaRepo.save(fatura);
+		
+		//atualizar os saldo bancario
+		atualizaSaldoBancario(conta, dadosPagto, null);
 	}
 	
+	private void atualizaSaldoBancario(ContaBancaria conta, PagarFaturaRequest dadosPagto, PagarParcelaRequest dadosPagto2) {
+		SaldoBancario sb = new SaldoBancario();
+		if(dadosPagto != null) { 
+			sb.setConta(conta);
+			sb.setDataTransacao(LocalDate.parse(dadosPagto.getDataPagamento()));
+			sb.setValor(dadosPagto.getValor());
+			sb.setTipo("Saída");
+		}
+		
+		if(dadosPagto2 != null) {
+			sb.setConta(conta);
+			sb.setDataTransacao(LocalDate.parse(dadosPagto2.getDataPagamento()));
+			sb.setValor(dadosPagto2.getValor());
+			sb.setTipo("Saída");
+		}
+		
+		
+		saldoBancarioRepo.save(sb);		
+	}
+
 	private ContaBancaria atualizaSaldoConta(ContaBancaria conta, BigDecimal valor) {
 		BigDecimal valorAtual = conta.getSaldo();
 		valorAtual = valorAtual.subtract(valor);
@@ -341,7 +368,10 @@ public class SaidasService {
 		parcela.setValorPago(dadosPagto.getValor());
 		parcela.setSituacao("Pago");
 		atualizaSaldoConta(conta, dadosPagto.getValor());
-		parcelaRepo.save(parcela);		
+		parcelaRepo.save(parcela);
+		
+		//atualiza saldo bancario
+		atualizaSaldoBancario(conta, null, dadosPagto);
 		
 	}
 

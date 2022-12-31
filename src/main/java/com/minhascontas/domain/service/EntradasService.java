@@ -16,12 +16,16 @@ import com.minhascontas.domain.model.ContaBancaria;
 import com.minhascontas.domain.model.Devedor;
 import com.minhascontas.domain.model.Entrada;
 import com.minhascontas.domain.model.ParcelaEntrada;
+import com.minhascontas.domain.model.SaldoBancario;
 import com.minhascontas.domain.repository.ClassificacaoRepository;
 import com.minhascontas.domain.repository.ContaBancariaRepository;
 import com.minhascontas.domain.repository.DevedorRepository;
 import com.minhascontas.domain.repository.EntradaRepository;
 import com.minhascontas.domain.repository.ParcelaEntradaRepository;
+import com.minhascontas.domain.repository.SaldoBancarioRepository;
 import com.minhascontas.domain.request.EntradaRequest;
+import com.minhascontas.domain.request.PagarFaturaRequest;
+import com.minhascontas.domain.request.PagarParcelaRequest;
 import com.minhascontas.domain.request.ReceberEntradaRequest;
 
 @Service
@@ -44,6 +48,9 @@ public class EntradasService {
 
 	@Autowired
 	private DefaultMapper mapper;
+	
+	@Autowired
+	private SaldoBancarioRepository saldoBancarioRepo;
 
 	public void novaEntrada(EntradaRequest payload) {
 		Entrada novaEntrada = mapper.requestEntradaToModel(payload);	
@@ -128,6 +135,19 @@ public class EntradasService {
 		p.setDataRecebimento(dataRecebimento);
 		parcelaRepo.save(p);
 		atualizaSaldoConta(conta, payload.getValor());
+		atualizaSaldoBancario(conta, payload);
+	}
+	
+	private void atualizaSaldoBancario(ContaBancaria conta, ReceberEntradaRequest payload) {
+		SaldoBancario sb = new SaldoBancario();
+		if(payload != null) { 
+			sb.setConta(conta);
+			sb.setDataTransacao(LocalDate.parse(payload.getDataRecebimento()));
+			sb.setValor(payload.getValor());
+			sb.setTipo("Entrada");
+		}		
+		
+		saldoBancarioRepo.save(sb);		
 	}
 
 }

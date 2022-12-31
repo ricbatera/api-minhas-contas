@@ -11,4 +11,6 @@ public interface ParcelaEntradaRepository extends JpaRepository<ParcelaEntrada, 
 
 	List<ParcelaEntrada> findByDataPrevistaRecebimentoBetween(LocalDate localDate, LocalDate localDate2);
 
+	List<ParcelaEntrada> findByDataPrevistaRecebimentoLessThan(LocalDate data);
+
 }

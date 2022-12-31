@@ -76,6 +76,6 @@ public class SaidasController {
 	
 	@PutMapping("/atualiza-faturas")
 	public void atualizaValorTodasFaturas() {
-		service.atualizaTodasFaturas();
+		service.ajustarTodos();
 	}
 }

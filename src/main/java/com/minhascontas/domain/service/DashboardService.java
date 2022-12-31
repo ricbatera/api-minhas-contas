@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,26 +15,31 @@ import com.minhascontas.core.utils.Utilitarios;
 import com.minhascontas.domain.dto.CartaoCreditoDashboardDto;
 import com.minhascontas.domain.dto.DashboardDto;
 import com.minhascontas.domain.dto.DebitoBoletoDashboardDto;
-import com.minhascontas.domain.dto.DevedorDto;
 import com.minhascontas.domain.dto.DevedortResponseDto;
-import com.minhascontas.domain.dto.FaturaDto;
+import com.minhascontas.domain.dto.SaldoDto;
 import com.minhascontas.domain.mapper.DefaultMapper;
+import com.minhascontas.domain.model.ContaBancaria;
 import com.minhascontas.domain.model.Devedor;
 import com.minhascontas.domain.model.Fatura;
 import com.minhascontas.domain.model.Parcela;
 import com.minhascontas.domain.model.ParcelaEntrada;
+import com.minhascontas.domain.model.SaldoBancario;
 import com.minhascontas.domain.repository.CartaoCreditoRepository;
 import com.minhascontas.domain.repository.ContaBancariaRepository;
 import com.minhascontas.domain.repository.FaturaRepository;
 import com.minhascontas.domain.repository.ParcelaEntradaRepository;
 import com.minhascontas.domain.repository.ParcelaRepository;
 import com.minhascontas.domain.repository.SaidaRepository;
+import com.minhascontas.domain.repository.SaldoBancarioRepository;
 
 @Service
 public class DashboardService {
 
 	@Autowired
 	private SaidaRepository saidaRepo;
+	
+	@Autowired
+	private SaldoBancarioRepository saldoBancarioRepo;
 	
 	@Autowired
 	private FaturaRepository faturaRepo;
@@ -61,6 +65,7 @@ public class DashboardService {
 		List<CartaoCreditoDashboardDto> faturasDoMes = new ArrayList<>();
 		List<DevedortResponseDto> responseDevedores = new ArrayList<>();
 		List<DebitoBoletoDashboardDto> boletosList = new ArrayList<>();
+		List<ContaBancaria> contas = contaRepo.findByStatus(true);
 
 		List<LocalDate> datasBase = Utilitarios.getDataInicialDataFinalLocalDateComAno(mes, ano);
 		List<Parcela> parcelas = parcelaRepo.findByDataVencimentoBetween(datasBase.get(0), datasBase.get(1));
@@ -156,9 +161,58 @@ public class DashboardService {
 		response.setTotalEmBoletos(totalEmBoletos);
 		response.setMinhasSaidas(minhasSaidas);
 		response.setMinhasEntradas(minhasEntradas);
+		response.setSaldo(getSaldosBancarios(mes, ano));
+		response.setSaldoAcumulado(saldoPrevisto(mes, ano));
+		response.setContas(contas);
 		return response;
 	}
 	
+	public SaldoDto getSaldosBancarios(int mes, int ano) {
+		List<LocalDate> datasBase = Utilitarios.getDataInicialDataFinalLocalDateComAno(mes, ano);
+		LocalDate data = datasBase.get(1);
+		data = data.plusDays(1L);
+		
+		List<SaldoBancario> saldo = saldoBancarioRepo.findByDataTransacaoLessThan(data);
+//		List<SaldoBancario> saldo = saldoBancarioRepo.findAll();
+//		List<SaldoBancario> saldo = saldoBancarioRepo.ateData(data);
+		saldo.stream()
+		.map(el-> el.getTipo())
+		.forEach(System.out::println);
+		System.out.println(data);
+		
+			BigDecimal totalEntradas = saldo.stream()
+					.filter(el -> el.getTipo().equals("Entrada"))
+					.map(el -> el.getValor())
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+			
+			BigDecimal totalSaidas = saldo.stream()
+					.filter(el -> el.getTipo().equals("Saída"))
+					.map(el -> el.getValor())
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+			
+			return new SaldoDto(totalSaidas, totalEntradas, totalEntradas.subtract(totalSaidas));		
 	
+	}
+	
+	public BigDecimal saldoPrevisto(int mes, int ano) {
+		
+		List<LocalDate> datasBase = Utilitarios.getDataInicialDataFinalLocalDateComAno(mes, ano);
+		LocalDate data = datasBase.get(1);
+		data = data.plusDays(1L);
+		
+		List <Parcela> parcelas = parcelaRepo.findByDataVencimentoLessThan(data);
+		List <ParcelaEntrada> entradas = parcelaEntradaRepo.findByDataPrevistaRecebimentoLessThan(data);
+		
+		BigDecimal totalEntradas = entradas.stream()
+				.map(e-> e.getValor())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		
+		BigDecimal totalSaidas = parcelas.stream()
+				.map(e-> e.getValor())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		
+		
+		return totalEntradas.subtract(totalSaidas);
+	}
 
 }
