@@ -3,7 +3,9 @@ package com.minhascontas.domain.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.minhascontas.domain.model.Classificacao;
 import com.minhascontas.domain.model.ContaBancaria;
+import com.minhascontas.domain.model.Devedor;
 import com.minhascontas.domain.model.Entrada;
 
 import lombok.Getter;
@@ -23,5 +25,7 @@ public class ItemListaEntradaDto {
 	private Entrada entrada;
 	private String situacao;
 	private ContaBancaria conta;
+	private Devedor devedor;
+	private Classificacao classificacao;
 
 }

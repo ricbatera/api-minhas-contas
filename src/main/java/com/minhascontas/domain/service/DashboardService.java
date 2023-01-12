@@ -173,12 +173,7 @@ public class DashboardService {
 		data = data.plusDays(1L);
 		
 		List<SaldoBancario> saldo = saldoBancarioRepo.findByDataTransacaoLessThan(data);
-//		List<SaldoBancario> saldo = saldoBancarioRepo.findAll();
-//		List<SaldoBancario> saldo = saldoBancarioRepo.ateData(data);
-		saldo.stream()
-		.map(el-> el.getTipo())
-		.forEach(System.out::println);
-		System.out.println(data);
+
 		
 			BigDecimal totalEntradas = saldo.stream()
 					.filter(el -> el.getTipo().equals("Entrada"))
@@ -204,10 +199,12 @@ public class DashboardService {
 		List <ParcelaEntrada> entradas = parcelaEntradaRepo.findByDataPrevistaRecebimentoLessThan(data);
 		
 		BigDecimal totalEntradas = entradas.stream()
+				.filter(p -> p.getDevedor() == null)
 				.map(e-> e.getValor())
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		
 		BigDecimal totalSaidas = parcelas.stream()
+				.filter(p -> p.getDevedor() == null)
 				.map(e-> e.getValor())
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		
