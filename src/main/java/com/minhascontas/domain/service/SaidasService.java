@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.minhascontas.core.utils.Utilitarios;
+import com.minhascontas.domain.dto.EditaSaidaDto;
 import com.minhascontas.domain.dto.FaturaDto;
 import com.minhascontas.domain.dto.ItemListaSaidaDto;
 import com.minhascontas.domain.dto.SaidaDto;
@@ -436,6 +437,14 @@ public class SaidasService {
 		}
 		sd.setXDeParcelas(String.valueOf(pagas.size()) +"/"+ String.valueOf(lista.size()));
 		sd.setTotal(total);
+		sd.setDiaVencimento(lista.get(0).getDataVencimento().getDayOfMonth());
 		return sd;
+	}
+
+	public void editaSaida(EditaSaidaDto payload) {
+		Saida s = saidaRepo.findById(payload.getId()).get();
+		s.setNome(payload.getNome());
+		s.setObs(payload.getObs());
+		saidaRepo.save(s);
 	}
 }

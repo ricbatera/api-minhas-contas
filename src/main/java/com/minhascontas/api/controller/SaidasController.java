@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.minhascontas.domain.dto.EditaSaidaDto;
 import com.minhascontas.domain.dto.FaturaDto;
 import com.minhascontas.domain.dto.ItemListaSaidaDto;
 import com.minhascontas.domain.dto.SaidaDto;
@@ -67,6 +68,11 @@ public class SaidasController {
 	@GetMapping("/busca-saida-id")
 	public SaidaDto buscaSaidaById(@Param(value= "idSaida") Long idSaida) {
 		return saidasService.buscaSaidaById(idSaida);
+	}
+	
+	@PutMapping("/edita-saida")
+	public void editaSaida(@RequestBody EditaSaidaDto payload) {
+		saidasService.editaSaida(payload);
 	}
 	
 	@PutMapping
