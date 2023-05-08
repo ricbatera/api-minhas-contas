@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,7 +19,7 @@ import com.minhascontas.domain.dto.EditaSaidaDto;
 import com.minhascontas.domain.dto.FaturaDto;
 import com.minhascontas.domain.dto.ItemListaSaidaDto;
 import com.minhascontas.domain.dto.SaidaDto;
-import com.minhascontas.domain.model.Saida;
+import com.minhascontas.domain.request.DeletarParcelaRequest;
 import com.minhascontas.domain.request.PagarFaturaRequest;
 import com.minhascontas.domain.request.PagarParcelaRequest;
 import com.minhascontas.domain.request.SaidaRequest;
@@ -83,5 +84,10 @@ public class SaidasController {
 	@PutMapping("/atualiza-faturas")
 	public void atualizaValorTodasFaturas() {
 		service.ajustarTodos();
+	}
+	
+	@DeleteMapping("/deletar")
+	public void deletarParcela(@RequestBody DeletarParcelaRequest req) {
+		saidasService.deletarParcelas(req);
 	}
 }
