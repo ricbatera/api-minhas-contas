@@ -31,6 +31,7 @@ import com.minhascontas.domain.repository.FaturaRepository;
 import com.minhascontas.domain.repository.ParcelaRepository;
 import com.minhascontas.domain.repository.SaidaRepository;
 import com.minhascontas.domain.repository.SaldoBancarioRepository;
+import com.minhascontas.domain.request.AtualizaParcelasRequest;
 import com.minhascontas.domain.request.DeletarParcelaRequest;
 import com.minhascontas.domain.request.EntradaRequest;
 import com.minhascontas.domain.request.PagarFaturaRequest;
@@ -448,6 +449,8 @@ public class SaidasService {
 		}
 		if (req.getDeletarRestante()) {
 			deletarRestante(req.getIdParcela());
+		} else {
+			parcelaRepo.deleteById(req.getIdParcela());
 		}
 	}
 
@@ -464,5 +467,20 @@ public class SaidasService {
 				.map(pp -> pp.getId())
 				.collect(Collectors.toList());
 		parcelaRepo.deleteAllByIdInBatch(ids);  // esse método foi o unico que deu certo para excluir o restante
+	}
+
+	public void atualziaParcelas(AtualizaParcelasRequest payload) {
+		Saida s = saidaRepo.findById(payload.getIdSaida()).get();
+		List<Parcela> parcel = s.getListaParcelas();
+		List<Parcela> pay = payload.getParcelas();
+		for(Parcela par: parcel) {
+			for(Parcela p: pay) {
+				if(par.getId().equals(p.getId())) {
+					par.setValor(p.getValor());;
+				}
+			}
+		}
+		s.setListaParcelas(parcel);
+		saidaRepo.save(s);
 	}
 }

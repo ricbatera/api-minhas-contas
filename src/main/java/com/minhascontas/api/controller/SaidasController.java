@@ -19,6 +19,7 @@ import com.minhascontas.domain.dto.EditaSaidaDto;
 import com.minhascontas.domain.dto.FaturaDto;
 import com.minhascontas.domain.dto.ItemListaSaidaDto;
 import com.minhascontas.domain.dto.SaidaDto;
+import com.minhascontas.domain.request.AtualizaParcelasRequest;
 import com.minhascontas.domain.request.DeletarParcelaRequest;
 import com.minhascontas.domain.request.PagarFaturaRequest;
 import com.minhascontas.domain.request.PagarParcelaRequest;
@@ -71,7 +72,12 @@ public class SaidasController {
 		return saidasService.buscaSaidaById(idSaida);
 	}
 	
-	@PutMapping("/edita-saida")
+	@PutMapping("/edita-parcelas")
+	public void atualziaParcelas(@RequestBody AtualizaParcelasRequest payload) {
+		saidasService.atualziaParcelas(payload);
+	}
+	
+	@PutMapping("/atualiza-parcelas")
 	public void editaSaida(@RequestBody EditaSaidaDto payload) {
 		saidasService.editaSaida(payload);
 	}
