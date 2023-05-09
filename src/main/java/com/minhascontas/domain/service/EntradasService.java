@@ -24,8 +24,6 @@ import com.minhascontas.domain.repository.EntradaRepository;
 import com.minhascontas.domain.repository.ParcelaEntradaRepository;
 import com.minhascontas.domain.repository.SaldoBancarioRepository;
 import com.minhascontas.domain.request.EntradaRequest;
-import com.minhascontas.domain.request.PagarFaturaRequest;
-import com.minhascontas.domain.request.PagarParcelaRequest;
 import com.minhascontas.domain.request.ReceberEntradaRequest;
 
 @Service

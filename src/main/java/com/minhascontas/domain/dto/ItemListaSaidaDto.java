@@ -3,7 +3,6 @@ package com.minhascontas.domain.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.minhascontas.domain.model.ContaBancaria;
 import com.minhascontas.domain.model.Fatura;
 import com.minhascontas.domain.model.Saida;

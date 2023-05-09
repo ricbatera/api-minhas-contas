@@ -24,19 +24,15 @@ import com.minhascontas.domain.model.Fatura;
 import com.minhascontas.domain.model.Parcela;
 import com.minhascontas.domain.model.ParcelaEntrada;
 import com.minhascontas.domain.model.SaldoBancario;
-import com.minhascontas.domain.repository.CartaoCreditoRepository;
 import com.minhascontas.domain.repository.ContaBancariaRepository;
 import com.minhascontas.domain.repository.FaturaRepository;
 import com.minhascontas.domain.repository.ParcelaEntradaRepository;
 import com.minhascontas.domain.repository.ParcelaRepository;
-import com.minhascontas.domain.repository.SaidaRepository;
 import com.minhascontas.domain.repository.SaldoBancarioRepository;
 
 @Service
 public class DashboardService {
 
-	@Autowired
-	private SaidaRepository saidaRepo;
 	
 	@Autowired
 	private SaldoBancarioRepository saldoBancarioRepo;
@@ -44,8 +40,6 @@ public class DashboardService {
 	@Autowired
 	private FaturaRepository faturaRepo;
 
-	@Autowired
-	private CartaoCreditoRepository cartaoRepo;
 	
 	@Autowired
 	private ContaBancariaRepository contaRepo;

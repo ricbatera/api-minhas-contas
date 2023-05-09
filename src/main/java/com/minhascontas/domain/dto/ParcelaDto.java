@@ -2,11 +2,8 @@ package com.minhascontas.domain.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.minhascontas.domain.model.ContaBancaria;
-import com.minhascontas.domain.model.Parcela;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,6 @@
 package com.minhascontas.domain.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
