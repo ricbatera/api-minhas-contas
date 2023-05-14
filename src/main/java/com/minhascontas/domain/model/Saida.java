@@ -52,6 +52,10 @@ public class Saida {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "saida", cascade = CascadeType.ALL)
 	private List<Parcela> listaParcelas = new ArrayList<>();
 	
+	//@JsonIgnore
+//	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//	private List<Tag> listaTags = new ArrayList<>();
+	
 	@PrePersist
 	public void setaEntradaSaidaNaLista() {
 		listaParcelas.forEach(i -> i.setSaida(this));

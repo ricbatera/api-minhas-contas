@@ -23,6 +23,7 @@ import com.minhascontas.domain.model.Fatura;
 import com.minhascontas.domain.model.Parcela;
 import com.minhascontas.domain.model.Saida;
 import com.minhascontas.domain.model.SaldoBancario;
+import com.minhascontas.domain.model.Tag;
 import com.minhascontas.domain.repository.CartaoCreditoRepository;
 import com.minhascontas.domain.repository.ClassificacaoRepository;
 import com.minhascontas.domain.repository.ContaBancariaRepository;
@@ -31,6 +32,7 @@ import com.minhascontas.domain.repository.FaturaRepository;
 import com.minhascontas.domain.repository.ParcelaRepository;
 import com.minhascontas.domain.repository.SaidaRepository;
 import com.minhascontas.domain.repository.SaldoBancarioRepository;
+import com.minhascontas.domain.repository.TagRepository;
 import com.minhascontas.domain.request.AtualizaParcelasRequest;
 import com.minhascontas.domain.request.DeletarParcelaRequest;
 import com.minhascontas.domain.request.EntradaRequest;
@@ -67,6 +69,9 @@ public class SaidasService {
 
 	@Autowired
 	private DevedorRepository devedorRepo;
+	
+	@Autowired
+	private TagRepository tagRepo;
 
 	@Autowired
 	private DefaultMapper mapper;
@@ -116,11 +121,17 @@ public class SaidasService {
 		}
 
 		// gerar parcelas
+		List<Long> t = saida.getTags();
 		for (LocalDate vencimento : vencimentos) {
+			List<Tag> tagLis = new ArrayList<>();
 			Parcela p = new Parcela();
 			p.setDataVencimento(vencimento);
 			p.setValor(saida.getValor());
 			p.setClassificacao(c);
+			for(Long tag: t) {
+				tagLis.add(tagRepo.findById(tag).get());
+			}
+			p.setListaTags(tagLis);
 			if (saida.getPago()) {
 				p.setSituacao("Pago");
 				p.setValorPago(saida.getValor());
@@ -219,9 +230,15 @@ public class SaidasService {
 		}
 
 		List<Parcela> parcelas = new ArrayList<>();
+		List<Long> tagIdList = s.getTags();
 		int cont = 0;
 		for (LocalDate vencimento : listaVencimentos) {
+			List<Tag> tags = new ArrayList<>();
 			Parcela p = new Parcela();
+			for(Long tag: tagIdList) {
+				tags.add(tagRepo.findById(tag).get());				
+			}
+			p.setListaTags(tags);
 			p.setFatura(faturas.get(cont));
 			p.setDataVencimento(vencimento);
 			p.setValor(valor);

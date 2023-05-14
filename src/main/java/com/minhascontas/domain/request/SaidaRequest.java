@@ -1,6 +1,7 @@
 package com.minhascontas.domain.request;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.Data;
 
@@ -23,4 +24,5 @@ public class SaidaRequest {
 	private BigDecimal valorEntrada;
 	private Boolean associaDevedor = false;
 	private Boolean criaEntrada = false;
+	private List<Long> tags;
 }

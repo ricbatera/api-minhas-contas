@@ -2,10 +2,12 @@ package com.minhascontas.domain.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import com.minhascontas.domain.model.ContaBancaria;
 import com.minhascontas.domain.model.Fatura;
 import com.minhascontas.domain.model.Saida;
+import com.minhascontas.domain.model.Tag;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -30,5 +32,6 @@ public class ItemListaSaidaDto {
 	private String contagemParcelas;
 	private String devedorNome;
 	private String classificacaoNome;
+	private List<Tag> tags;
 
 }
