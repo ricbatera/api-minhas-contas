@@ -109,5 +109,15 @@ public abstract class Utilitarios {
 		return datas;
 		
 	}
+	
+	public static List<Long> splitStringPorTracoToLong(String valor){
+		String toArray[] = valor.split("-");
+		List<Long> tags = new ArrayList<>();
+		for(String tag: toArray) {
+			tags.add(Long.parseLong(tag));
+		}
+		tags.stream().forEach(t-> System.out.println(t));
+		return tags;
+	}
 
 }

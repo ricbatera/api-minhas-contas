@@ -58,8 +58,10 @@ public class SaidasController {
 	}
 	
 	@GetMapping("/listar-mensal")
-	public List<ItemListaSaidaDto> listarSaidasMensal(@Param(value = "mes") int mes, @Param(value = "ano") int ano) {
-		return saidasService.listarMensal(mes, ano);
+	public List<ItemListaSaidaDto> listarSaidasMensal(@Param(value = "mes") int mes, 
+			@Param(value = "ano") int ano, 
+			@Param(value= "tags") String tags) {		
+		return saidasService.listarMensal(mes, ano, tags);
 	}
 	
 	@GetMapping("/busca-fatura")

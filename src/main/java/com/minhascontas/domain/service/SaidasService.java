@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,13 +124,13 @@ public class SaidasService {
 		// gerar parcelas
 		List<Long> t = saida.getTags();
 		for (LocalDate vencimento : vencimentos) {
-			List<Tag> tagLis = new ArrayList<>();
+			List<Classificacao> tagLis = new ArrayList<>();
 			Parcela p = new Parcela();
 			p.setDataVencimento(vencimento);
 			p.setValor(saida.getValor());
 			p.setClassificacao(c);
 			for(Long tag: t) {
-				tagLis.add(tagRepo.findById(tag).get());
+				tagLis.add(classificacaoRepo.findById(tag).get());
 			}
 			p.setListaTags(tagLis);
 			if (saida.getPago()) {
@@ -233,10 +234,10 @@ public class SaidasService {
 		List<Long> tagIdList = s.getTags();
 		int cont = 0;
 		for (LocalDate vencimento : listaVencimentos) {
-			List<Tag> tags = new ArrayList<>();
+			List<Classificacao> tags = new ArrayList<>();
 			Parcela p = new Parcela();
 			for(Long tag: tagIdList) {
-				tags.add(tagRepo.findById(tag).get());				
+				tags.add(classificacaoRepo.findById(tag).get());				
 			}
 			p.setListaTags(tags);
 			p.setFatura(faturas.get(cont));
@@ -395,14 +396,34 @@ public class SaidasService {
 
 	}
 
-	public List<ItemListaSaidaDto> listarMensal(int mes, int ano) {
+	public List<ItemListaSaidaDto> listarMensal(int mes, int ano, String tags) {
+		List<Long> idTags = new ArrayList<>();
+		if(!(tags.equals("All"))) {
+			idTags = Utilitarios.splitStringPorTracoToLong(tags);			
+		}		
+		
 		// criar validação para ver se o mes é entre 1 - 12
 		List<LocalDate> dataInicialDataFinal = Utilitarios.getDataInicialDataFinalLocalDateComAno(mes, ano);
 		List<Parcela> parcelas = parcelaRepo.findByDataVencimentoBetween(dataInicialDataFinal.get(0),
 				dataInicialDataFinal.get(1));
 		List<ItemListaSaidaDto> response = new ArrayList<>();
-
-		for (Parcela p : parcelas) {
+		List<Parcela> parcelasFiltradas = new ArrayList<>();
+		parcelasFiltradas.addAll(parcelas);
+		if(!idTags.isEmpty()) {
+			parcelasFiltradas.clear();
+			for(Long idTag: idTags) {
+				for(Parcela p : parcelas) {
+					List<Classificacao> tagsLi = p.getListaTags();
+					for(Classificacao tt: tagsLi) {
+						if(tt.getId() == idTag) {
+							parcelasFiltradas.add(p);
+						}
+					}
+				}
+			}
+		}
+		List<Parcela>pf = parcelasFiltradas.stream().distinct().collect(Collectors.toList());
+		for (Parcela p : pf) {
 			ItemListaSaidaDto i = mapper.modelSaidaToDto(p);
 			if (p.getDevedor() != null) {
 				i.setDevedorNome(p.getDevedor().getNome());

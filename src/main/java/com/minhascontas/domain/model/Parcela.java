@@ -68,7 +68,7 @@ public class Parcela {
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name= "parcela_tag", joinColumns = @JoinColumn(name= "parcela_id"), inverseJoinColumns = @JoinColumn(name="tag_id"))
-	private List<Tag> listaTags = new ArrayList<>();
+	private List<Classificacao> listaTags = new ArrayList<>();
 	
 	
 	@ManyToOne
