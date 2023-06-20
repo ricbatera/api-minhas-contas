@@ -79,7 +79,7 @@ public class SaidasController {
 		saidasService.atualziaParcelas(payload);
 	}
 	
-	@PutMapping("/atualiza-parcelas")
+	@PutMapping("/edita-saida")
 	public void editaSaida(@RequestBody EditaSaidaDto payload) {
 		saidasService.editaSaida(payload);
 	}

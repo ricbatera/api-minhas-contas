@@ -66,6 +66,7 @@ public class Parcela {
 	@JoinColumn(name = "saida_id")
 	private Saida saida;
 	
+	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name= "parcela_tag", joinColumns = @JoinColumn(name= "parcela_id"), inverseJoinColumns = @JoinColumn(name="tag_id"))
 	private List<Classificacao> listaTags = new ArrayList<>();

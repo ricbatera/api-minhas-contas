@@ -461,7 +461,8 @@ public class SaidasService {
 		Saida s = saidaRepo.findById(id).get();
 		SaidaDto sd = mapper.modelToSaidaDto(s);
 		List<Parcela> lista = s.getListaParcelas();
-
+		sd.setTags(lista.get(0).getListaTags());
+		
 		List<Parcela> pagas = lista.stream().filter(p -> p.getSituacao().equals("Pago")).collect(Collectors.toList());
 
 		BigDecimal total = lista.stream().map(p -> p.getValor()).reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -476,6 +477,20 @@ public class SaidasService {
 
 	public void editaSaida(EditaSaidaDto payload) {
 		Saida s = saidaRepo.findById(payload.getId()).get();
+		List<Parcela> p = s.getListaParcelas();
+		List<Classificacao> c = new ArrayList<>();
+		List<Long> ids = payload.getTags();
+		
+		for(Long id : ids) {
+			c.add(classificacaoRepo.findById(id).get());
+		}
+		
+		for(Parcela par: p ) {
+			par.setListaTags(c);
+		}
+		
+		s.setListaParcelas(p);		
+		
 		s.setNome(payload.getNome());
 		s.setObs(payload.getObs());
 		saidaRepo.save(s);
@@ -512,6 +527,7 @@ public class SaidasService {
 		List<Parcela> parcel = s.getListaParcelas();
 		List<Parcela> pay = payload.getParcelas();
 		for(Parcela par: parcel) {
+			par.setListaTags(payload.getTags());
 			for(Parcela p: pay) {
 				if(par.getId().equals(p.getId())) {
 					par.setValor(p.getValor());;

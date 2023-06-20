@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.minhascontas.domain.model.CartaoCredito;
+import com.minhascontas.domain.model.Classificacao;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,4 +24,5 @@ public class SaidaDto {
 	private int diaVencimento;
 	private String xDeParcelas;
 	private CartaoCredito cartao;
+	private List<Classificacao> tags = new ArrayList<>();
 }

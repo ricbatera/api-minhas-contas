@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -41,7 +40,6 @@ public class Classificacao {
 	private Boolean status = true;
 	
 	@JsonIgnore
-	@JsonBackReference
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "listaTags", cascade = CascadeType.ALL)
 	private List<Parcela> parcelas;
 	
