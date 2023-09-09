@@ -180,4 +180,11 @@ public class CadastrosService {
 		return response;
 	}
 
+	public void inativaDevedor(Long idDevedor) {
+		Devedor devedor = devedorRepo.findById(idDevedor).get();
+		devedor.setStatus(false);
+		devedorRepo.save(devedor);
+		
+	}
+
 }
